@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noksha Lab Secure Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f1f5f9; }
+        .auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .hidden-content { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-3 pb-20 relative">
+
+    <!-- 1. LOGIN SCREEN (লক স্কিন) -->
+    <div id="loginScreen" class="auth-screen">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-xs text-center">
+            <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="lock" class="w-8 h-8 text-emerald-600"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">নিরাপত্তা চেক</h2>
+            <p class="text-xs text-slate-500 mb-4">নকশা ল্যাব এর তথ্য দেখতে পিন দিন</p>
+            
+            <input type="password" id="pinInput" placeholder="PIN Code" class="w-full text-center text-2xl font-bold tracking-widest border-2 border-slate-200 rounded-lg py-3 mb-4 focus:border-emerald-500 outline-none">
+            
+            <button onclick="checkPin()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">লগইন করুন</button>
+            <p id="errorMsg" class="text-red-500 text-xs mt-3 hidden">ভুল পিন! আবার চেষ্টা করুন।</p>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APP (লুকানো থাকবে) -->
+    <div id="mainApp" class="hidden-content max-w-lg mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
+                <span class="font-bold text-lg">নকশা ল্যাব</span>
+            </div>
+            <div class="flex items-center gap-1 text-xs bg-emerald-500/20 px-2 py-1 rounded-full text-emerald-300 border border-emerald-500/30">
+                <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div> লাইভ
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="px-4 mt-4 mb-4 space-y-4">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-5 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute right-0 top-0 p-4 opacity-10"><i data-lucide="wallet" class="w-24 h-24"></i></div>
+                <div class="relative z-10">
+                    <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">বর্তমান পাওনা</p>
+                    <h2 class="text-4xl font-bold" id="currentDueDisplay">৳ 0</h2>
+                    <div class="mt-4 flex gap-4 text-xs text-blue-100 border-t border-blue-500/30 pt-3">
+                        <div><span class="opacity-70 block">মোট আয়</span><span id="totalEarnedDisplay" class="font-bold">৳ 0</span></div>
+                        <div class="w-px bg-blue-500/50"></div>
+                        <div><span class="opacity-70 block">তোলা হয়েছে</span><span id="totalWithdrawnDisplay" class="font-bold">৳ 0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-orange-50 rounded-xl p-3 border border-orange-100 flex justify-between items-center">
+                 <div class="flex items-center gap-2">
+                    <i data-lucide="store" class="w-5 h-5 text-orange-600"></i>
+                    <div>
+                        <p class="text-orange-600 text-xs font-bold uppercase">দোকান মালিক পাবে</p>
+                        <p class="text-xs text-orange-400">মোট লাভের ৫০%</p>
+                    </div>
+                 </div>
+                 <h3 class="text-xl font-bold text-orange-800" id="shopShareDisplay">৳ 0</h3>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="px-4 pb-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex bg-slate-100 p-1 rounded-lg mb-4">
+                    <button onclick="setType('income')" id="btnIncome" class="flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 bg-white text-emerald-600 shadow-sm"><i data-lucide="arrow-up-right" class="w-4 h-4"></i> নতুন কাজ</button>
+                    <button onclick="setType('withdrawal')" id="btnWithdraw" class="flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 text-slate-500"><i data-lucide="arrow-down-left" class="w-4 h-4"></i> টাকা গ্রহণ</button>
+                </div>
+                <form id="transactionForm" class="space-y-3">
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">৳</span>
+                        <input type="number" id="amountInput" placeholder="কাজের লাভ" class="w-full pl-8 pr-4 py-3 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none text-xl font-bold" required>
+                    </div>
+                    <input type="text" id="noteInput" placeholder="বিবরণ (অপশনাল)" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none">
+                    <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg shadow-md flex items-center justify-center gap-2"><i data-lucide="plus" class="w-5 h-5"></i> সেভ করুন</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- List -->
+        <div class="border-t border-slate-100 bg-white">
+            <div class="px-6 py-3 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                <span>লেনদেনের ইতিহাস</span>
+                <span class="text-[10px] text-emerald-600 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i> সিংক হচ্ছে</span>
+            </div>
+            <div id="transactionList" class="overflow-y-auto max-h-[400px] divide-y divide-slate-100"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // ==========================================
+        // ১. আপনার গোপন পাসওয়ার্ড এখানে সেট করুন
+        // ==========================================
+        window.MY_SECRET_PIN = "8267"; // আপনি চাইলে এটি পরিবর্তন করতে পারেন (যেমন: 9988)
+        
+        // ==========================================
+        // ২. আপনার ফায়ারবেস কোড এখানে পেস্ট করুন
+        // ==========================================
+        const firebaseConfig = {
+             // এখানে আপনার কোড দিন...
+            apiKey: "AIzaSyDY0pU6WWTd-QWfe-dF-RtFwR5fGMZqNy4",
+            authDomain: "noksha-lab.firebaseapp.com",
+            projectId: "noksha-lab",
+            storageBucket: "noksha-lab.firebasestorage.app",
+            messagingSenderId: "47480782384",
+            appId: "1:47480782384:web:5523d7e200c950ca7c37f5"
+        }; 
+        // ==========================================
+
+        const appId = 'noksha-lab-default';
+        let db, auth, currentUser, currentType = 'income', transactions = [];
+
+        // --- PIN LOGIC ---
+        window.checkPin = function() {
+            const input = document.getElementById('pinInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if(input === window.MY_SECRET_PIN) {
+                document.getElementById('loginScreen').classList.add('hidden-content');
+                document.getElementById('mainApp').classList.remove('hidden-content');
+                initFirebase(); // Start app only after login
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('pinInput').value = '';
+            }
+        }
+
+        async function initFirebase() {
+            try {
+                if (!firebaseConfig.apiKey) {
+                    alert("কোডের ভেতরে ফায়ারবেস কি (Key) বসানো হয়নি!");
+                    return;
+                }
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                await signInAnonymously(auth);
+                currentUser = auth.currentUser;
+                
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_transactions_live'));
+                onSnapshot(q, (snapshot) => {
+                    transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    transactions.sort((a, b) => b.timestamp - a.timestamp);
+                    render();
+                });
+            } catch (e) {
+                console.error(e);
+                alert("ফায়ারবেস কানেকশন সমস্যা!");
+            }
+        }
+
+        // [বাকি সব আগের ফাংশন অপরিবর্তিত রাখা হলো...]
+        window.saveTransaction = async function(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const note = document.getElementById('noteInput').value;
+            if (!amount) return;
+
+            const now = new Date();
+            const newTx = {
+                amount: amount,
+                note: note || (currentType === 'income' ? 'নতুন কাজ' : 'টাকা গ্রহণ'),
+                type: currentType,
+                date: now.toLocaleDateString('bn-BD'),
+                time: now.toLocaleTimeString('bn-BD'),
+                timestamp: Date.now(),
+                createdBy: currentUser.uid
+            };
+            if (currentType === 'income') { newTx.userShare = amount / 2; newTx.shopShare = amount / 2; }
+
+            try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_transactions_live'), newTx);
+                document.getElementById('amountInput').value = ''; document.getElementById('noteInput').value = ''; } 
+            catch(e) { alert("সেভ হয়নি!"); }
+        };
+
+        window.deleteItem = async function(id) {
+            if(confirm("মুছে ফেলতে চান?")) {
+                try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'noksha_transactions_live', id)); }
+                catch(e) { alert("ডিলিট হয়নি!"); }
+            }
+        };
+
+        function render() {
+            let totalProfit = 0, userEarned = 0, shopEarned = 0, userWithdrawn = 0;
+            const list = document.getElementById('transactionList');
+            list.innerHTML = '';
+
+            transactions.forEach(t => {
+                const isIncome = (t.type || 'income') === 'income';
+                if (isIncome) {
+                    totalProfit += t.amount;
+                    userEarned += (t.userShare || t.amount/2);
+                    shopEarned += (t.shopShare || t.amount/2);
+                } else {
+                    userWithdrawn += t.amount;
+                }
+
+                list.innerHTML += `
+                <div class="p-4 hover:bg-slate-50 border-l-4 ${isIncome ? 'border-emerald-400' : 'border-red-400 bg-red-50/30'} group flex justify-between">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">${t.note} ${!isIncome ? '<span class="text-[10px] bg-red-100 text-red-600 px-1 rounded">আদায়</span>' : ''}</h4>
+                        <div class="flex gap-2 text-[10px] text-slate-400 mt-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${t.date}, ${t.time}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="block font-bold text-lg ${isIncome ? 'text-emerald-600' : 'text-red-600'}">${isIncome ? '+' : '-'} ৳ ${t.amount}</span>
+                        <button onclick="deleteItem('${t.id}')" class="text-red-300 text-xs hover:text-red-600 opacity-0 group-hover:opacity-100">ডিলিট</button>
+                    </div>
+                </div>`;
+            });
+
+            document.getElementById('currentDueDisplay').innerText = `৳ ${(userEarned - userWithdrawn).toLocaleString()}`;
+            document.getElementById('totalEarnedDisplay').innerText = `৳ ${userEarned.toLocaleString()}`;
+            document.getElementById('totalWithdrawnDisplay').innerText = `৳ ${userWithdrawn.toLocaleString()}`;
+            document.getElementById('shopShareDisplay').innerText = `৳ ${shopEarned.toLocaleString()}`;
+            lucide.createIcons();
+        }
+
+        window.setType = function(type) {
+            currentType = type;
+            const isInc = type === 'income';
+            document.getElementById('btnIncome').className = `flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 shadow-sm ${isInc ? 'bg-white text-emerald-600' : 'text-slate-500'}`;
+            document.getElementById('btnWithdraw').className = `flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 shadow-sm ${!isInc ? 'bg-white text-red-600' : 'text-slate-500'}`;
+            document.getElementById('submitBtn').className = `w-full text-white font-bold py-3 px-4 rounded-lg shadow-md flex items-center justify-center gap-2 ${isInc ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`;
+            document.getElementById('submitBtn').innerHTML = isInc ? `<i data-lucide="plus" class="w-5 h-5"></i> সেভ করুন` : `<i data-lucide="download" class="w-5 h-5"></i> পেমেন্ট সেভ করুন`;
+            lucide.createIcons();
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', saveTransaction);
+        lucide.createIcons();
+    </script>
+</body>
+</html>
