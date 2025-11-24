@@ -112,72 +112,34 @@
         </div>
     </div>
 
-    <!-- 4. MANAGE SERVICES MODAL -->
+    <!-- 4. MANAGE SERVICES MODAL (Updated with Edit) -->
     <div id="serviceListModal" class="modal">
         <div class="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md mx-4 h-[70vh] flex flex-col shadow-2xl animate-bounce-in border border-slate-200 dark:border-slate-700">
             <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 rounded-t-xl">
                 <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="list-todo" class="w-5 h-5"></i> কাজের তালিকা ম্যানেজ করুন</h3>
                 <button onclick="document.getElementById('serviceListModal').style.display='none'" class="text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
+            
             <div class="p-3 border-b dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
-                <p class="text-xs font-bold text-slate-500 mb-2">নতুন কাজ সেট করুন (ভবিষ্যতের জন্য)</p>
+                <p class="text-xs font-bold text-slate-500 mb-2" id="manageTitle">নতুন কাজ সেট করুন / এডিট করুন</p>
                 <div class="flex gap-2 mb-2">
                     <input type="text" id="manageName" placeholder="কাজের নাম" class="flex-[2] p-2 text-xs border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                     <input type="number" id="manageCost" placeholder="খরচ (প্রতি পিস)" class="flex-1 p-2 text-xs border rounded dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                 </div>
-                <button onclick="addServiceDirectly()" class="w-full bg-emerald-600 text-white py-1.5 rounded text-xs font-bold">লিস্টে যোগ করুন</button>
+                <div class="flex gap-2">
+                    <button id="addServiceBtn" onclick="addServiceDirectly()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 rounded text-xs font-bold transition">লিস্টে যোগ করুন</button>
+                    <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden w-16 bg-slate-300 hover:bg-slate-400 text-slate-700 py-1.5 rounded text-xs font-bold transition">বাতিল</button>
+                </div>
             </div>
+
             <div id="serviceListContainer" class="flex-1 overflow-y-auto p-2 space-y-1 bg-white dark:bg-slate-800"></div>
         </div>
     </div>
 
-    <!-- 5. TRASH MODAL -->
-    <div id="trashModal" class="modal">
-        <div class="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md mx-4 h-[80vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 animate-bounce-in">
-            <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center bg-red-50 dark:bg-red-900/20 rounded-t-xl">
-                <h3 class="font-bold text-red-600 dark:text-red-400 flex items-center gap-2"><i data-lucide="trash-2" class="w-5 h-5"></i> রিসাইকেল বিন</h3>
-                <button onclick="document.getElementById('trashModal').style.display='none'" class="text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="bg-yellow-50 dark:bg-yellow-900/20 p-2 text-[10px] text-center text-yellow-700 dark:text-yellow-400 border-b border-yellow-100 dark:border-yellow-900/30">
-                এখান থেকে রিস্টোর বা চিরতরে ডিলিট করা যাবে।
-            </div>
-            <div id="trashList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-        </div>
-    </div>
-
-    <!-- 6. HISTORY MODAL -->
-    <div id="historyModal" class="modal">
-        <div class="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md mx-4 h-[80vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 animate-bounce-in">
-            <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 rounded-t-xl">
-                <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i> অ্যাক্টিভিটি লগ</h3>
-                <button onclick="document.getElementById('historyModal').style.display='none'" class="text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div id="logList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-        </div>
-    </div>
-
-    <!-- 7. SETTINGS MODAL -->
-    <div id="settingsModal" class="modal">
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 w-full max-w-md mx-4 shadow-2xl border border-slate-200 dark:border-slate-700">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg dark:text-white">সেটিংস</h3>
-                <button onclick="closeSettings()" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="mb-6">
-                <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">থিম</h4>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setTheme('light')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="sun" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">লাইট</span></button>
-                    <button onclick="setTheme('dark')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="moon" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">ডার্ক</span></button>
-                    <button onclick="setTheme('system')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="monitor" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">সিস্টেম</span></button>
-                </div>
-            </div>
-            <textarea id="configInput" rows="4" class="w-full border p-3 rounded text-xs font-mono bg-slate-50 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 mb-3" placeholder='ফায়ারবেস কোড...'></textarea>
-            <button onclick="saveConfig()" class="w-full bg-emerald-600 text-white py-2 rounded font-bold text-sm mb-4">সেভ</button>
-            <div class="border-t pt-4">
-                <button onclick="initiateFactoryReset()" class="w-full border border-red-200 text-red-600 bg-red-50 py-2 rounded font-bold text-xs">রিসেট (সব মুছুন)</button>
-            </div>
-        </div>
-    </div>
+    <!-- 5, 6, 7 Modals (Trash, History, Settings) -->
+    <div id="trashModal" class="modal"> <div class="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md mx-4 h-[80vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700"> <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center"> <h3 class="font-bold text-red-600 flex items-center gap-2"><i data-lucide="trash-2" class="w-5 h-5"></i> রিসাইকেল বিন</h3> <button onclick="document.getElementById('trashModal').style.display='none'" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button> </div> <div id="trashList" class="flex-1 overflow-y-auto p-4 space-y-3"></div> </div> </div>
+    <div id="historyModal" class="modal"> <div class="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md mx-4 h-[80vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700"> <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center"> <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="history" class="w-5 h-5"></i> অ্যাক্টিভিটি লগ</h3> <button onclick="document.getElementById('historyModal').style.display='none'" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button> </div> <div id="logList" class="flex-1 overflow-y-auto p-4 space-y-3"></div> </div> </div>
+    <div id="settingsModal" class="modal"> <div class="bg-white dark:bg-slate-800 rounded-xl p-5 w-full max-w-md mx-4 shadow-2xl border border-slate-200 dark:border-slate-700"> <div class="flex justify-between items-center mb-4"> <h3 class="font-bold text-lg dark:text-white">সেটিংস</h3> <button onclick="closeSettings()" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button> </div> <div class="mb-6"> <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">থিম</h4> <div class="grid grid-cols-3 gap-2"> <button onclick="setTheme('light')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="sun" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">লাইট</span></button> <button onclick="setTheme('dark')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="moon" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">ডার্ক</span></button> <button onclick="setTheme('system')" class="p-2 border rounded flex flex-col items-center gap-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"><i data-lucide="monitor" class="w-4 h-4"></i><span class="text-xs dark:text-slate-300">সিস্টেম</span></button> </div> </div> <textarea id="configInput" rows="4" class="w-full border p-3 rounded text-xs font-mono bg-slate-50 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 mb-3" placeholder='ফায়ারবেস কোড...'></textarea> <button onclick="saveConfig()" class="w-full bg-emerald-600 text-white py-2 rounded font-bold text-sm mb-4">সেভ</button> <div class="border-t pt-4"> <button onclick="initiateFactoryReset()" class="w-full border border-red-200 text-red-600 bg-red-50 py-2 rounded font-bold text-xs">রিসেট (সব মুছুন)</button> </div> </div> </div>
 
     <!-- 8. MAIN APP UI -->
     <div id="mainApp" class="hidden-content max-w-lg mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
@@ -191,14 +153,8 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <!-- Trash Button RESTORED -->
-                <button onclick="openTrash()" class="bg-slate-700 dark:bg-slate-800 p-2 rounded-full hover:bg-red-900 text-red-300 border border-transparent hover:border-red-500/50 transition" title="রিসাইকেল বিন">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                </button>
-                
-                <button onclick="openServiceList()" class="bg-slate-700 dark:bg-slate-800 p-2 rounded-full hover:bg-blue-600 text-slate-300 transition" title="সার্ভিস ম্যানেজ">
-                    <i data-lucide="list-plus" class="w-5 h-5"></i>
-                </button>
+                <button onclick="openTrash()" class="bg-slate-700 dark:bg-slate-800 p-2 rounded-full hover:bg-red-900 text-red-300 border border-transparent hover:border-red-500/50 transition" title="রিসাইকেল বিন"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                <button onclick="openServiceList()" class="bg-slate-700 dark:bg-slate-800 p-2 rounded-full hover:bg-blue-600 text-slate-300 transition" title="সার্ভিস ম্যানেজ"><i data-lucide="list-plus" class="w-5 h-5"></i></button>
                 <button onclick="openHistory()" class="bg-slate-700 dark:bg-slate-800 p-2 rounded-full hover:bg-slate-600 text-slate-300"><i data-lucide="history" class="w-5 h-5"></i></button>
                 <button onclick="openSettings()" class="p-1 hover:bg-slate-700 rounded-full text-slate-300"><i data-lucide="settings" class="w-5 h-5"></i></button>
             </div>
@@ -206,7 +162,6 @@
 
         <!-- Stats -->
         <div class="px-4 mt-4 mb-4 space-y-4">
-            <!-- User Card -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-5 text-white shadow-lg relative overflow-hidden">
                 <div class="absolute right-0 top-0 p-4 opacity-10"><i data-lucide="wallet" class="w-24 h-24"></i></div>
                 <div class="relative z-10">
@@ -219,7 +174,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Owner Card -->
             <div class="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-100 dark:border-orange-900/30 relative overflow-hidden">
                  <div class="flex justify-between items-start mb-3">
                     <div>
@@ -245,13 +199,11 @@
                 </div>
                 
                 <form id="transactionForm" class="space-y-3">
-                    <!-- Total Amount -->
                     <div class="relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">৳</span>
                         <input type="number" id="amountInput" placeholder="মোট গ্রহণ করা টাকা" class="w-full pl-8 pr-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-emerald-500 outline-none text-xl font-bold" required>
                     </div>
                     
-                    <!-- INCOME SECTION (Cart) -->
                     <div id="incomeInputs" class="space-y-2">
                         <div class="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-600">
                             <div class="flex gap-2 mb-2">
@@ -266,7 +218,6 @@
                         </div>
                     </div>
 
-                    <!-- WITHDRAWAL SECTION -->
                     <div id="withdrawalInputs" class="hidden">
                         <input type="text" id="withdrawNote" placeholder="বিবরণ (যেমন: হাত খরচ)" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-emerald-500 outline-none">
                     </div>
@@ -288,7 +239,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, getDoc, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, setDoc, onSnapshot, query, doc, deleteDoc, getDoc, getDocs, writeBatch, updateDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         // SETTINGS
         window.MY_SECRET_PIN = "8267"; 
@@ -304,7 +255,7 @@
         const appId = 'noksha-lab-default';
         let db, auth, currentUser, currentType = 'income', transactions = [], services = [], serviceMap = {};
         let sessionUser = localStorage.getItem('noksha_username') || "";
-        let subServices = [], pendingTransaction = null;
+        let subServices = [], pendingTransaction = null, editingServiceId = null;
 
         // THEME & INIT
         function applyTheme(theme) {
@@ -456,22 +407,68 @@
             } catch(e) { alert("সেভ হয়নি!"); }
         }
 
-        // --- UTILS (Trash, Services, Render etc.) ---
+        // --- MANAGE SERVICES (EDIT ADDED) ---
         window.addServiceDirectly = async () => {
             const name = document.getElementById('manageName').value.trim();
             const cost = parseFloat(document.getElementById('manageCost').value);
             if(!name || isNaN(cost)) return;
-            try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_services'), { name, cost, addedBy: sessionUser }); document.getElementById('manageName').value = ''; document.getElementById('manageCost').value = ''; renderServiceList(); } catch(e) {}
+            
+            try {
+                if(editingServiceId) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'noksha_services', editingServiceId), { name, cost });
+                    cancelEdit();
+                } else {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_services'), { name, cost, addedBy: sessionUser });
+                    document.getElementById('manageName').value = ''; document.getElementById('manageCost').value = '';
+                }
+                renderServiceList();
+            } catch(e) { alert("এরর!"); }
         }
+
+        window.prepareEdit = (id, name, cost) => {
+            editingServiceId = id;
+            document.getElementById('manageName').value = name;
+            document.getElementById('manageCost').value = cost;
+            const btn = document.getElementById('addServiceBtn');
+            btn.innerText = "আপডেট করুন";
+            btn.classList.replace('bg-emerald-600', 'bg-orange-600');
+            btn.classList.replace('hover:bg-emerald-700', 'hover:bg-orange-700');
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+        }
+
+        window.cancelEdit = () => {
+            editingServiceId = null;
+            document.getElementById('manageName').value = '';
+            document.getElementById('manageCost').value = '';
+            const btn = document.getElementById('addServiceBtn');
+            btn.innerText = "লিস্টে যোগ করুন";
+            btn.classList.replace('bg-orange-600', 'bg-emerald-600');
+            btn.classList.replace('hover:bg-orange-700', 'hover:bg-emerald-700');
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
         window.openServiceList = () => { renderServiceList(); document.getElementById('serviceListModal').style.display = 'flex'; }
         function renderServiceList() {
             const c = document.getElementById('serviceListContainer'); c.innerHTML = '';
             if(services.length === 0) c.innerHTML = '<p class="text-center text-slate-400 mt-10">খালি</p>';
-            else services.forEach(s => { c.innerHTML += `<div class="flex justify-between p-3 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50"><div class="flex-1 cursor-pointer"><span class="font-bold text-slate-700 dark:text-slate-200">${s.name}</span><span class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">৳${s.cost}</span></div><button onclick="deleteServiceFromList('${s.id}', '${s.name}')" class="text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; });
+            else services.forEach(s => { 
+                c.innerHTML += `
+                <div class="flex justify-between items-center p-3 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <div class="flex-1">
+                        <span class="font-bold text-slate-700 dark:text-slate-200">${s.name}</span>
+                        <span class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">৳${s.cost}/পিস</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="prepareEdit('${s.id}', '${s.name}', '${s.cost}')" class="text-blue-400 hover:text-blue-600"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        <button onclick="deleteServiceFromList('${s.id}', '${s.name}')" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>`; 
+            });
             lucide.createIcons();
         }
         window.deleteServiceFromList = async (id, name) => { if(confirm(`'${name}' মুছবেন?`)) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'noksha_services', id)); }
 
+        // --- UTILS ---
         // Trash Logic
         window.deleteItem = async function(id) { if(confirm("রিসাইকেল বিনে পাঠাতে চান?")) { try { const r = doc(db, 'artifacts', appId, 'public', 'data', 'noksha_transactions_live', id); const s = await getDoc(r); if(s.exists()) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_trash'), { ...s.data(), deletedBy: sessionUser, deletedAt: Date.now() }); await deleteDoc(r); logAction('TRASH', `${s.data().amount} টাকা মুছে ফেলা হয়েছে`); } } catch(e) { alert("ব্যর্থ!"); } } }
         window.openTrash = () => { document.getElementById('trashModal').style.display = 'flex'; const l = document.getElementById('trashList'); l.innerHTML = 'লোডিং...'; onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'noksha_trash')), (s) => { const i = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.deletedAt - a.deletedAt); l.innerHTML = i.length ? '' : '<p class="text-center text-slate-400 mt-10">খালি</p>'; i.forEach(x => l.innerHTML += `<div class="flex justify-between p-3 border rounded dark:border-slate-700"><div><p class="font-bold dark:text-white">${x.note} (${x.amount}৳)</p></div><div class="flex gap-2"><button onclick="restoreItem('${x.id}')" class="text-green-500 text-xs">ফেরত</button><button onclick="permanentDelete('${x.id}')" class="text-red-500 text-xs">মুছুন</button></div></div>`); }); }
